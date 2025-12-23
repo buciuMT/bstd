@@ -1,0 +1,16 @@
+[
+  {
+    "arguments": [
+      "/usr/lib/ccache/bin/gcc",
+      "-c",
+      "-I",
+      "include",
+      "-o",
+      "tests/allocators",
+      "tests/allocators.c"
+    ],
+    "directory": "/home/blackwhite007y/Documents/c++/bstd",
+    "file": "/home/blackwhite007y/Documents/c++/bstd/tests/allocators.c",
+    "output": "/home/blackwhite007y/Documents/c++/bstd/tests/allocators"
+  }
+]
