@@ -2,10 +2,10 @@
 
 #include "bstd_utils.h"
 
-#define BSTD_CLAMP(expr, max, min)                                             \
+#define BSTD_CLAMP(expr, min, max)                                             \
   ({                                                                           \
     typeof(expr) v = (expr), mx = (max), mn = (min);                           \
-    v > mx ? mx : v < mn ? mn : v;                                             \
+    v < mn ? mn : (v > mx ? mx : v);                                           \
   })
 
 #define BSTD_ABS(expr)                                                         \

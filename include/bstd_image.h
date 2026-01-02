@@ -1,6 +1,7 @@
 #pragma once
 
 #include "bstd_math.h"
+#include "bstd_memory.h"
 #include "bstd_utils.h"
 
 ALWAYS_INLINE void bstd_convert_shift_u8_i8(const u8 *in, i8 *out, usize cnt,
@@ -9,6 +10,9 @@ ALWAYS_INLINE void bstd_convert_u8_RGB_YCbCr(const u8 *in, u8 *out,
                                              usize padding, usize count);
 ALWAYS_INLINE void bstd_convert_u8_YCbCr_RGB(const u8 *in, u8 *out,
                                              usize padding, usize count);
+
+ALWAYS_INLINE void bstd_separate_channels(const u8 *src, usize size, u8 *r,
+                                          u8 *g, u8 *b);
 
 #ifdef __BSTD_IMPLEMENT_ALL__
 
@@ -33,11 +37,13 @@ ALWAYS_INLINE void bstd_convert_u8_RGB_YCbCr(const u8 *in, u8 *out,
     isize g = in[pos + 1];
     isize b = in[pos + 2];
 
-    // https://en.wikipedia.org/wiki/YCbCr
-
-    u8 y = BSTD_ROUND(16 + (0.299 * r) + (0.587 * g) + (0.114 * b));
-    u8 cb = BSTD_ROUND(128 + (-0.168736 * r) - (0.331274 * g) + (0.5 * b));
-    u8 cr = BSTD_ROUND(128 + (0.5 * r) - (0.4583 * g) - (0.0417 * b));
+    // https://www.w3.org/Graphics/JPEG/jfif3.pdf
+    u8 y = BSTD_CLAMP(BSTD_ROUND(16 + (0.299 * r) + (0.587 * g) + (0.114 * b)),
+                      0, 255);
+    u8 cb = BSTD_CLAMP(
+        BSTD_ROUND(128 + (-0.168736 * r) - (0.331264 * g) + (0.5 * b)), 0, 255);
+    u8 cr = BSTD_CLAMP(
+        BSTD_ROUND(128 + (0.5 * r) - (0.418688 * g) - (0.081312 * b)), 0, 255);
 
     out[pos] = y;
     out[pos + 1] = cb;
@@ -53,11 +59,10 @@ ALWAYS_INLINE void bstd_convert_u8_YCbCr_RGB(const u8 *in, u8 *out,
     isize cb = in[pos + 1];
     isize cr = in[pos + 2];
 
-    // https://en.wikipedia.org/wiki/YCbCr
-
+    // JPEG standard conversion formulas
     u8 r = BSTD_CLAMP(BSTD_ROUND((y - 16) + 1.402 * (cr - 128)), 0, 255);
     u8 g = BSTD_CLAMP(
-        BSTD_ROUND((y - 16) - 0.344136 * (cb - 128) - 0.714136 * (cr - 128)), 0,
+        BSTD_ROUND((y - 16) - 0.34414 * (cb - 128) - 0.71414 * (cr - 128)), 0,
         255);
     u8 b = BSTD_CLAMP(BSTD_ROUND((y - 16) + 1.772 * (cb - 128)), 0, 255);
 
@@ -67,3 +72,8 @@ ALWAYS_INLINE void bstd_convert_u8_YCbCr_RGB(const u8 *in, u8 *out,
   }
 }
 #endif
+
+ALWAYS_INLINE void bstd_separate_channels(const u8 *src, usize size, u8 *r,
+                                          u8 *g, u8 *b) {
+  bstd_memsep(src, size * 3, 1, 3, r, g, b);
+}
