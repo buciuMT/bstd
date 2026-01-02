@@ -1,7 +1,4 @@
 #pragma once
-#ifdef __BSTD_ERROR_IMPLEMENTATION__
-#define __BSTD_CORE_IMPLEMENTATION__
-#endif
 #include "bstd_core.h"
 #include "bstd_utils.h"
 
@@ -23,10 +20,10 @@
   }
 
 #define bstd_err(type_name, err_value)                                         \
-  (type_name) { .err = err_value, .is_err = true }
+  (type_name) { .err = (err_value), .is_err = true }
 
 #define bstd_val(type_name, value)                                             \
-  (type_name) { .val = value }
+  (type_name) { .val = (value) }
 
 #define bstd_try(expr)                                                         \
   ({                                                                           \
@@ -36,15 +33,17 @@
     tmp.val;                                                                   \
   })
 
-#define bstd_or_else(expr, val)                                                \
+#define bstd_or_else(expr, alt_val)                                            \
   ({                                                                           \
     __typeof__(expr) _tmp = (expr);                                            \
-    _tmp.is_err ? (val) : _tmp.val;                                            \
+    __typeof__(_tmp.err) err = _tmp.err;                                       \
+    _tmp.is_err ? (alt_val) : _tmp.val;                                        \
   })
 
 #define bstd_expect(expr, err_message)                                         \
   ({                                                                           \
     __typeof__(expr) _tmp = (expr);                                            \
-    if (expr.is_err) {                                                         \
-    }                                                                          \
+    if (_tmp.is_err)                                                           \
+      bstd_panic("%s", err_message);                                           \
+    _tmp.val;                                                                  \
   })

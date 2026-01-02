@@ -93,3 +93,24 @@ typedef double f64;
 
 typedef size_t usize;
 typedef ptrdiff_t isize;
+
+typedef struct {
+  char *str;
+  usize size;
+} string;
+
+#define SLIT(s) ((string){.str = (s), .size = sizeof((s)) - 1})
+
+#define max(a, b)                                                              \
+  ({                                                                           \
+    typeof(a) tmpa = (a);                                                      \
+    typeof(b) tmpb = (b);                                                      \
+    (tmpa < tmpb ? tmpb : tmpa);                                               \
+  })
+
+#define min(a, b)                                                              \
+  ({                                                                           \
+    typeof(a) tmpa = (a);                                                      \
+    typeof(b) tmpb = (b);                                                      \
+    (tmpa < tmpb ? tmpa : tmpb);                                               \
+  })

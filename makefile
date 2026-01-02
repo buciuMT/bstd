@@ -1,6 +1,5 @@
 CC := gcc
-CFLAGS := -Wall -O3 -Wpedantic
-
+CFLAGS := -Wall -O3
 INCLUDE := include
 INCLUDES := $(INCLUDE)/*.h
 TEST_DIR := tests
