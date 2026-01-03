@@ -53,10 +53,12 @@ typedef struct {
   u8 *arr;
 } bstd_fixed_arena_allocator;
 
-allocation_opt bstd_fixed_arena_allocator_alloc(void *alloc, usize size);
-void bstd_fixed_arena_allocator_dealloc(void *alloc, void *ptr);
-void bstd_fixed_arena_allocator_free_all(void *alloc);
-bstd_alloc_interface bstd_interface_from_fixed_arena_allocator(void *alloc);
+allocation_opt bstd_fixed_arena_allocator_alloc(void *nonnull alloc,
+                                                usize size);
+void bstd_fixed_arena_allocator_dealloc(void *nonnull alloc, void *ptr);
+void bstd_fixed_arena_allocator_free_all(void *nonnull alloc);
+bstd_alloc_interface
+bstd_interface_from_fixed_arena_allocator(void *nonnull alloc);
 
 extern const bstd_alloc_interface *bstd_global_alloc;
 
@@ -66,7 +68,8 @@ extern const bstd_alloc_interface *bstd_global_alloc;
 
 #ifdef __BSTD_ALLOCATOR_IMPLEMENTATION__
 
-allocation_opt bstd_fixed_arena_allocator_alloc(void *alloc, usize size) {
+allocation_opt bstd_fixed_arena_allocator_alloc(void *nonnull alloc,
+                                                usize size) {
   bstd_fixed_arena_allocator *a = (bstd_fixed_arena_allocator *)alloc;
   const usize s = bstd_alloc_with_aligment(size);
   if (a->current + s >= a->size)
@@ -75,8 +78,8 @@ allocation_opt bstd_fixed_arena_allocator_alloc(void *alloc, usize size) {
   a->current += s;
   return bstd_val(allocation_opt, ret);
 }
-void bstd_fixed_arena_allocator_dealloc(void *alloc, void *ptr) {}
-void bstd_fixed_arena_allocator_free_all(void *alloc) {
+void bstd_fixed_arena_allocator_dealloc(void *nonnull alloc, void *ptr) {}
+void bstd_fixed_arena_allocator_free_all(void *nonnull alloc) {
 
   bstd_fixed_arena_allocator *a = (bstd_fixed_arena_allocator *)alloc;
   a->current = 0;

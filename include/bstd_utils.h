@@ -4,6 +4,11 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#define UNUSED(expr)                                                           \
+  do {                                                                         \
+    (void)(expr);                                                              \
+  } while (0)
+
 #if defined(__GNUC__) || defined(__clang__)
 #define BSTD_GNUC_LIKE 1
 #else
@@ -75,6 +80,9 @@
 #define ANSI_COLOR_CYAN "\x1b[36m"
 #define ANSI_COLOR_RESET "\x1b[0m"
 
+#define nullable
+#define nonnull
+
 // Unsigned integers
 typedef uint8_t u8;
 typedef uint16_t u16;
@@ -95,7 +103,7 @@ typedef size_t usize;
 typedef ptrdiff_t isize;
 
 typedef struct {
-  char *str;
+  const char *str;
   usize size;
 } string;
 

@@ -10,6 +10,18 @@
     bstd_exit(1);                                                              \
   }
 
+#define bstd_none(type)                                                        \
+  (type) { .is_err = true }
+
+#define bstd_optional_def(value_type)                                          \
+  typedef struct {                                                             \
+    union {                                                                    \
+      value_type val;                                                          \
+      u8 err;                                                                  \
+    };                                                                         \
+    bool is_err;                                                               \
+  }
+
 #define bstd_error_union_def(err_type, value_type)                             \
   typedef struct {                                                             \
     union {                                                                    \
@@ -37,7 +49,20 @@
   ({                                                                           \
     __typeof__(expr) _tmp = (expr);                                            \
     __typeof__(_tmp.err) err = _tmp.err;                                       \
+    (void)err;                                                                 \
     _tmp.is_err ? (alt_val) : _tmp.val;                                        \
+  })
+
+#define bstd_or_ret(expr, ret_expr)                                            \
+  ({                                                                           \
+    __typeof__(expr) _tmp = (expr);                                            \
+    __typeof__(_tmp.err) err = _tmp.err;                                       \
+    (void)err;                                                                 \
+    _tmp.is_err ? ({                                                           \
+      return (ret_expr);                                                       \
+      _tmp.val;                                                                \
+    })                                                                         \
+                : _tmp.val;                                                    \
   })
 
 #define bstd_expect(expr, err_message)                                         \

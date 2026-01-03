@@ -1,8 +1,10 @@
 #pragma once
 #include "bstd_allocator.h"
+#include "bstd_args.h"
 #include "bstd_core.h"
 #include "bstd_error.h"
 #include "bstd_image.h"
 #include "bstd_stream.h"
+#include "bstd_string.h"
 #include "bstd_tester.h"
 #include "bstd_utils.h"
