@@ -132,7 +132,8 @@ bstd_args_parse_ret bstd_args_parse(const bstd_args *sarg, int count,
         }
     } else {
       for (usize a = 0; a < sarg->count; a++)
-        if (sarg->args[a].shortform && (sarg->args[a].shortform == arg[i][1])) {
+        if (sarg->args[a].shortform && arg[i][2] == '\0' &&
+            (sarg->args[a].shortform == arg[i][1])) {
           int offset = bstd_or_ret(
               bstd_arg_element_run(sarg->args + a, count - i - 1, arg + i + 1),
               bstd_err(
