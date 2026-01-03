@@ -35,6 +35,8 @@ int bstd_cmp_str_cstr(const string a, const char *b) {
     if (a.str[i] != b[i])
       return a.str[i] - b[i];
   }
+  if (b[a.size])
+    return -(int)b[a.size];
   return 0;
 }
 #endif
