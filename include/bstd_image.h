@@ -2,6 +2,7 @@
 
 #include "bstd_math.h"
 #include "bstd_memory.h"
+#include "bstd_stream.h"
 #include "bstd_utils.h"
 
 ALWAYS_INLINE void bstd_convert_shift_u8_i8(const u8 *in, i8 *out, usize cnt,
@@ -13,6 +14,9 @@ ALWAYS_INLINE void bstd_convert_u8_YCbCr_RGB(const u8 *in, u8 *out,
 
 ALWAYS_INLINE void bstd_separate_channels(const u8 *src, usize size, u8 *r,
                                           u8 *g, u8 *b);
+
+bstd_stream_errs bstd_dump_ppm(bstd_sink *sink, const u8 *buffer, usize height,
+                               usize width, bool rgb);
 
 #ifdef __BSTD_IMPLEMENT_ALL__
 
@@ -71,9 +75,42 @@ ALWAYS_INLINE void bstd_convert_u8_YCbCr_RGB(const u8 *in, u8 *out,
     out[pos + 2] = b;
   }
 }
-#endif
 
 ALWAYS_INLINE void bstd_separate_channels(const u8 *src, usize size, u8 *r,
                                           u8 *g, u8 *b) {
   bstd_memsep(src, size * 3, 1, 3, r, g, b);
 }
+
+bstd_stream_errs bstd_dump_ppm(bstd_sink *sink, const u8 *buffer, usize height,
+                               usize width, bool rgb) {
+  bstd_stream_errs err = bstd_sink_write(sink, rgb ? "P6\n" : "P2\n", 1, 3);
+  if (err)
+    return err;
+  const int b_size = 16;
+  int size = b_size - 1;
+  char cb[b_size];
+  cb[b_size - 1] = ' ';
+
+  usize tmp = height;
+  while (tmp && size)
+    cb[--size] = '0' + tmp % 10, tmp /= 10;
+
+  if (bstd_sink_write(sink, cb + size, 1, b_size - size))
+    return err;
+
+  cb[b_size - 1] = '\n';
+  size = b_size - 1;
+
+  tmp = width;
+  while (tmp && size)
+    cb[--size] = '0' + tmp % 10, tmp /= 10;
+
+  if (bstd_sink_write(sink, cb + size, 1, b_size - size))
+    return err;
+
+  err = bstd_sink_write(sink, buffer, rgb ? 3 : 1, height * width);
+  if (err)
+    return err;
+  return BS_S_OK;
+}
+#endif
