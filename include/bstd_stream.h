@@ -98,7 +98,7 @@ ALWAYS_INLINE void bstd_sink_close(bstd_sink *sink) {
     sink->close(sink->backing_obj);
 }
 
-void _bstd_stream_close_null(bstd_sink *) {}
+void _bstd_stream_close_null(bstd_sink *sink) {}
 
 #ifndef __BSTD_EMBEDED__
 #include <errno.h>

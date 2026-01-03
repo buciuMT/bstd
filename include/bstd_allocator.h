@@ -22,9 +22,9 @@ typedef enum {
 bstd_error_union_def(ALLOCATION_ERR, void *) allocation_opt;
 
 typedef struct _bstd_alloc_interface {
-  const allocation_opt (*alloc)(void *, usize);
-  const void (*dealloc)(void *, void *);
-  const void (*free_all)(void *);
+  allocation_opt (*const alloc)(void *, usize);
+  void (*const dealloc)(void *, void *);
+  void (*const free_all)(void *);
   void *backing_allocator;
 } bstd_alloc_interface;
 
@@ -84,20 +84,20 @@ void bstd_fixed_arena_allocator_free_all(void *alloc) {
 _bstd_alloc_interface_new_def(bstd_interface_from_fixed_arena_allocator,
                               bstd_fixed_arena_allocator_alloc,
                               bstd_fixed_arena_allocator_dealloc,
-                              bstd_fixed_arena_allocator_free_all)
+                              bstd_fixed_arena_allocator_free_all);
 
 #ifndef __BSTD_EMBEDED__
 #include <stdlib.h>
 
-    allocation_opt _bstd_global_allocate(void *, unsigned size) {
+allocation_opt _bstd_global_allocate(void *_, unsigned size) {
   void *mem = malloc(size);
   if (!mem)
     return bstd_err(allocation_opt, AE_NOT_ENOUGH_SPACE);
   return bstd_val(allocation_opt, mem);
 }
-void _bstd_global_dealloc(void *, void *data) { free(data); }
+void _bstd_global_dealloc(void *_, void *data) { free(data); }
 #else
-    extern const bstd_alloc_interface *bstdbstd_global_alloc = 0;
+extern const bstd_alloc_interface *bstdbstd_global_alloc = 0;
 #endif
 
 #endif

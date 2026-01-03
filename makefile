@@ -1,4 +1,4 @@
-CC := gcc
+CC := clang
 CFLAGS := -Wall -O3
 INCLUDE := include
 INCLUDES := $(INCLUDE)/*.h
