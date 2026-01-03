@@ -110,8 +110,7 @@ bstd_stream_opt_length _bstd_file_write(void *backing_obj, const u8 *buffer,
   int file = (int)(usize)backing_obj;
   ssize_t ret = write(file, buffer, count);
   if (ret < 0)
-    return bstd_err(bstd_stream_opt_length,
-                    BS_F_EIO); // TODO CONVERT ALL ERRORS
+    return bstd_err(bstd_stream_opt_length, BS_FLUSH_ERROR);
   return bstd_val(bstd_stream_opt_length, ret);
 }
 

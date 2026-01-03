@@ -42,6 +42,38 @@ typedef struct {
 bstd_error_union_def(bstd_arg_parse_err, int) bstd_arg_parse_ret;
 
 bstd_arg_parse_ret bstd_arg_element_run(const bstd_arg_element *nonnull elm,
+                                        int count, const char **arg);
+
+typedef struct {
+  bstd_arg_element args[BSTD_MAX_ARGS];
+  usize count;
+} bstd_args;
+
+typedef struct _bstd_args_unparsed {
+  usize count;
+  int *positions;
+} bstd_args_unparsed;
+
+bstd_error_union_def(bstd_arg_parse_err,
+                     bstd_args_unparsed) bstd_args_parse_ret;
+
+bstd_args_parse_ret bstd_args_parse(const bstd_args *sarg, int count,
+                                    const char **arg,
+                                    bstd_alloc_interface *nullable alloc);
+
+typedef struct _bstd_a_menu {
+  struct _bstd_a_menu *next;
+  struct _bstd_a_menu *children;
+  bstd_args *args;
+} bstd_a_menu;
+
+#ifdef __BSTD_IMPLEMENT_ALL__
+#define __BSTD_ARGS_IMPLEMENTATION__
+#endif
+
+#ifdef __BSTD_ARGS_IMPLEMENTATION__
+
+bstd_arg_parse_ret bstd_arg_element_run(const bstd_arg_element *nonnull elm,
                                         int count, const char **arg) {
   switch (elm->type) {
   case BS_ARG_NULL:
@@ -73,19 +105,6 @@ bstd_arg_parse_ret bstd_arg_element_run(const bstd_arg_element *nonnull elm,
     break;
   }
 }
-
-typedef struct {
-  bstd_arg_element args[BSTD_MAX_ARGS];
-  usize count;
-} bstd_args;
-
-typedef struct _bstd_args_unparsed {
-  usize count;
-  int *positions;
-} bstd_args_unparsed;
-
-bstd_error_union_def(bstd_arg_parse_err,
-                     bstd_args_unparsed) bstd_args_parse_ret;
 
 bstd_args_parse_ret bstd_args_parse(const bstd_args *sarg, int count,
                                     const char **arg,
@@ -141,13 +160,4 @@ bstd_args_parse_ret bstd_args_parse(const bstd_args *sarg, int count,
       bstd_args_parse_ret,
       ((bstd_args_unparsed){.count = unparsed_cnt, .positions = positions}));
 }
-
-typedef struct _bstd_a_menu {
-  struct _bstd_a_menu *next;
-  struct _bstd_a_menu *children;
-  bstd_args *args;
-} bstd_a_menu;
-
-#ifdef __BSTD_IMPLEMENT_ALL__
-#define __BSTD_ARGS_IMPLEMENTATION__
 #endif
