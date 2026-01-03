@@ -143,8 +143,10 @@ bstd_args_parse_ret bstd_args_parse(const bstd_args *sarg, int count,
           i += offset;
           goto next_argument;
         }
+      return bstd_err(bstd_args_parse_ret,
+                      ((bstd_arg_parse_err){.type = BS_E_AR_INVALID_ARGUMENT,
+                                            .position = i}));
     }
-    unparsed[unparsed_cnt++] = i;
   next_argument:;
   }
   if (!alloc)
